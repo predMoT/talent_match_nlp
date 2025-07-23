@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 import uvicorn
 from contextlib import asynccontextmanager
+import os
 
 # API routes import
 from .api.cv_routes import router as cv_router
@@ -77,10 +78,10 @@ app.add_middleware(
 )
 
 # Static files (frontend için)
-try:
-    app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
-except:
-    pass  # Frontend yoksa devam et
+static_dir = "frontend/static"
+if not os.path.exists(static_dir):
+    os.makedirs(static_dir)
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # API route'larını ekle
 app.include_router(cv_router)
